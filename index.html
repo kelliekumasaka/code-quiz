@@ -9,14 +9,23 @@
 </head>
 <body>
     <header>
-        <h4 id="scoreBoard"></h4>
-        <h4 id="time"></h4>
+        <h4 id="scoreBoard">Score: </h4>
+        <h4 id="time">Timer: </h4>
+        <h4 class="interactive" id="viewHighScores">View Highscores</h4>
     </header>
     <h2 id="question"></h2>
-    <h3 id="scores"></h3>
     <ol id="multipleChoice"></ol>
-    <form id ="yourName"></form>
+    <form method="POST" id ="yourName" data-state="hidden">
+        <div class="field">
+            <h3 id="scores"></h3>
+            <label for="name">Nickname:</label>
+            <input type="text" id="name" name="name" placeholder="Your nickname here"/>
+        </div>
+        <button type="submit">Submit</button>
+        
+    </form>
     <button id="startBtn">Start Game</button>
+    <button id="playAgain">Play Again</button>
     <script src="script.js"></script>
 </body>
 </html>

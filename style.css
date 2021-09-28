@@ -1,0 +1,17 @@
+header{
+    display: flex;
+    justify-content: space-between;
+}
+
+h4{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.interactive {
+    cursor: pointer;
+}
+
+li{
+    
+}
