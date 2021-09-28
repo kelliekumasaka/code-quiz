@@ -1,88 +1,98 @@
+// defined needed global variables
 var timerInterval;
-var secondsLeft = 30;
-var olEl = document.querySelector("#multipleChoice")
+var x = 0;
+var score = 0;
+var secondsLeft = 50;
+var olEl = document.querySelector("#multipleChoice");
+var scoreEl = document.querySelector("#scoreBoard")
 var timeEl = document.querySelector("#time");
 var h2El = document.querySelector("#question");
+var h3El = document.querySelector("#scores")
+var startBtn = document.querySelector("#startBtn")
 var questionsArray = [   
     {question: "When was the last time the Mariners went to the playoffs?",
-    choiceOne: "1995",
-    choiceTwo: "2017",
-    choiceThree: "2001",
-    choiceFour: "2011",
+    choices: ["1995", "2017","2001","2011"],
+    answer:"2001"
     },
 
     {question:"Which Mariner has NOT been inducted into the Hall of Fame?", 
-    choiceOne: "Ichiro Suzuki",
-    choiceTwo: "Edgar Martinez", 
-    choiceThree: "Randy Johnson",
-    choiceFour: "Rickey Henderson"
+    choices: ["Ichiro Suzuki","Edgar Martinez", "Randy Johnson","Rickey Henderson"],
+    answer:"Ichiro Suzuki"
     },
 
     {question: "Who is the current manager of the Mariners?",
-    choiceOne: "Lou Pinella",
-    choiceTwo:"Dick Williams",
-    choiceThree:"Lloyd McLendon",
-    choiceFour:"Scott Servais"
+    choices: ["Lou Pinella","Dick Williams","Lloyd McLendon","Scott Servais"],
+    answer:"Scott Servais"
     },
 
     {question:"How many pitchers did the Mariners use in a combined no-hitter against the Los Angeles Dodgers on June 8, 2012?",
-    choiceOne:"4",
-    choiceTwo:"5",
-    choiceThree:"6",
-    choiceFour:"7"
+    choices: ["4","5","6","7"],
+    answer: "6"
     },
 
     {question: "In 2020, which Mariner was named AL Rookie of the Year?",
-    choiceOne:"Ty France",
-    choiceTwo:"Kyle Lewis",
-    choiceThree:"Dylan Moore",
-    choiceFour:"Mitch Haniger"
+    choices: ["Ty France","Kyle Lewis","Dylan Moore","Mitch Haniger"],
+    answer: "Kyle Lewis"
     },
 ]
-// TODO: timer begins at 30s and counts down per 1000ms --> if userAnswer is incorrect will subtract 5s  --> if questions finish timer ends run displayScore --> OR if timer ends run displayScore 
+
+function userChoice(){
+    // checks the user's answers and takes action depending on answer
+    if (this.innerHTML !== questionsArray[x].answer){
+        secondsLeft-=5;
+    }else{
+        score+=20; 
+        console.log(score);
+        scoreEl.textContent = "Score: " + score;
+    }
+    // will either display next question or clear interval and go to score page depending on what question the user is on
+    if (x < questionsArray.length-1) {
+        x++;
+        quizQuestions();
+    }else{
+        clearInterval(timerInterval);
+        displayScore();
+    }
+}
 
 // TODO: function displayScore -->  prompt("Please enter your initials") --> localStorage.set userInitials and localStorage.get userScore and userInitials --> and winnersAndLosers()
 function displayScore(){
-
+    console.log("hello");
+    h2El.textContent = "High Scores";
+    h3El.textContent = "Your score: " + score;
+    scoreEl.textContent = ' ';
+    
 }
 
 // TODO: function winnersAndLosers --> if userScore > pastUserScore[0] then prepend() --> else for loop until find pastUserScore that is lower and prepend()
 
-// TODO: function quizQuestions --> calls the questionArray objects and run answerCheck function --> if correct
-function quizQuestions(){
-    for (let i=0; i < questionsArray.length; i++){
-        var questionsOfQuestions = questionsArray[i].question;
-        document.querySelector('#question').textContent=questionsOfQuestions;
-    }
-    for (let i = 0; i < questionsArray.length; i++) {
-        var questionChoiceOne = questionsArray[i].choiceOne;
-        var li1 = document.createElement("li");
-        li1.textContent = questionChoiceOne;
-        olEl.append(li1);
-    }
-    for (let i = 0; i < questionsArray.length; i++) {
-        var questionChoiceTwo = questionsArray[i].choiceTwo;
-        var li2 = document.createElement("li");
-        li2.textContent = questionChoiceTwo
-        olEl.append(li2);
-    }
+// TODO: create restart button that clears screen and runs timer and quiz again
 
+// calls quiz questions from array and displays them to page along with appended corresponding multiple choice answers
+function quizQuestions(){
+    h2El.textContent=questionsArray[x].question;
+    olEl.innerHTML = " ";        
+    for (let i = 0; i < questionsArray[x].choices.length; i++) {
+        var quizChoice = questionsArray[x].choices[i];
+        var liEl = document.createElement("li");            
+        liEl.textContent = quizChoice;
+        liEl.addEventListener("click", userChoice);
+        olEl.append(liEl);
+    }
 }
 
-
-// TODO: start button click to begin quizQuestions and timer
+// starts quiz with button click
 document.querySelector("#startBtn").addEventListener("click", function(){
     timerInterval = setInterval(function() {
         if (secondsLeft > 0){    
             secondsLeft--;
             timeEl.textContent = "Timer: " + secondsLeft + " seconds left";
         }
-        else if (secondsLeft ===0){
+        else if (secondsLeft<=0){
+            clearInterval(timerInterval);
             displayScore();
         }
     }, 1000);
+    quizQuestions();
 }
 )
-document.querySelector("#startBtn").addEventListener("click", function(){
-    quizQuestions();
-})
