@@ -82,6 +82,7 @@ submissionForm.addEventListener("submit", function (event) {
   }
 });
 
+// clearing the page and showing the submission form
 function displayScore() {
   clearInterval(timerInterval);
   h2El.textContent = "High Scores";
@@ -140,7 +141,21 @@ document.querySelector("#startBtn").addEventListener("click", function () {
 // button to view highscore standings
 viewHighScores.addEventListener("click", function(){
     clearInterval(timerInterval);
-    finalHighScores();
+    h2El.textContent = "High Scores";
+    scoreEl.textContent = " ";
+    olEl.textContent = " ";
+    playAgain.setAttribute("style", "display:inline");
+    if(JSON.parse(localStorage.getItem("highScoreLeaders")!==null)){ 
+        winnerScores = JSON.parse(localStorage.getItem("highScoreLeaders"));
+        highScores = winnerScores;
+        for (let i = 0; i < highScores.length; i++) {
+            var myScoringName = highScores[i].name;
+            var myScoringScore = highScores[i].score;
+            var liScores = document.createElement("li");
+            liScores.textContent = myScoringName + ": " + myScoringScore;
+            highScoreBoard.appendChild(liScores);   
+        }
+    }
 });
 
 // button that will refresh the page so user can play again
