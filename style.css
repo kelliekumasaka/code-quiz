@@ -1,6 +1,15 @@
+*{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 header{
     display: flex;
     justify-content: space-between;
+}
+
+
+#question{
+    text-align: center;
 }
 
 h4{
@@ -8,10 +17,33 @@ h4{
     flex-wrap: wrap;
 }
 
+#yourName{
+    text-align: center;
+}
+
 .interactive {
     cursor: pointer;
 }
 
-li{
-    
+ol li{
+    margin: 5px;
+    background-color: aquamarine;
+    padding: 5px;
+}
+
+ol{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul{
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+ul li{
+    padding: 5px;
 }

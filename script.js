@@ -1,5 +1,5 @@
 // defines needed global variables
-var timerInterval;
+var timerInterval, winnerScores;
 var x = 0;
 var score = 0;
 var secondsLeft = 40;
@@ -12,7 +12,9 @@ var startBtn = document.querySelector("#startBtn");
 var submissionForm = document.querySelector("#yourName");
 var playAgain = document.querySelector("#playAgain");
 var viewHighScores = document.querySelector("#viewHighScores");
+var highScoreBoard = document.querySelector("#highScoreCount");
 var highScores = [];
+var myObj = {};
 var nameInput = document.querySelector("#name");
 var questionsArray = [
   {
@@ -23,29 +25,18 @@ var questionsArray = [
 
   {
     question: "Which Mariner has NOT been inducted into the Hall of Fame?",
-    choices: [
-      "Ichiro Suzuki",
-      "Edgar Martinez",
-      "Randy Johnson",
-      "Rickey Henderson",
-    ],
+    choices: ["Ichiro Suzuki","Edgar Martinez","Randy Johnson","Rickey Henderson",],
     answer: "Ichiro Suzuki",
   },
 
   {
     question: "Who is the current manager of the Mariners?",
-    choices: [
-      "Lou Pinella",
-      "Dick Williams",
-      "Lloyd McLendon",
-      "Scott Servais",
-    ],
+    choices: ["Lou Pinella","Dick Williams","Lloyd McLendon","Scott Servais"],
     answer: "Scott Servais",
   },
 
   {
-    question:
-      "How many pitchers did the Mariners use in a combined no-hitter against the Los Angeles Dodgers on June 8, 2012?",
+    question:"How many pitchers did the Mariners use in a combined no-hitter against the Los Angeles Dodgers on June 8, 2012?",
     choices: ["4", "5", "6", "7"],
     answer: "6",
   },
@@ -60,6 +51,46 @@ var questionsArray = [
 // clears screen from unneeded HTML elements
 playAgain.setAttribute("style", "display:none");
 submissionForm.setAttribute("style", "display:none");
+
+// stores information into the local storage and and then outputs it onto the page
+function finalHighScores(){
+    localStorage.setItem("highScoreLeaders", JSON.stringify(highScores));
+    winnerScores = JSON.parse(localStorage.getItem("highScoreLeaders"));
+    highScores = winnerScores;
+    for (let i = 0; i < highScores.length; i++) {
+        var myScoringName = highScores[i].name;
+        var myScoringScore = highScores[i].score;
+        var liScores = document.createElement("li");
+        liScores.textContent = myScoringName + ": " + myScoringScore;
+        highScoreBoard.appendChild(liScores);   
+    }
+}
+
+// saves users name and score
+submissionForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  var nameText = nameInput.value.trim();
+  if (nameText === "") {
+    alert("Please enter your name");
+    return;
+  } else {
+    highScores = JSON.parse(localStorage.getItem("highScoreLeaders")) || [];
+    myObj["name"] = nameText;
+    myObj["score"] = score;
+    highScores.push(myObj);
+    finalHighScores();
+  }
+});
+
+function displayScore() {
+  clearInterval(timerInterval);
+  h2El.textContent = "High Scores";
+  h3El.textContent = "Your score: " + score;
+  scoreEl.textContent = " ";
+  olEl.textContent = " ";
+  submissionForm.setAttribute("style", "display:inline");
+  playAgain.setAttribute("style", "display:inline");
+}
 
 function userChoice() {
   // checks the user's answers and takes action depending on answer
@@ -78,43 +109,20 @@ function userChoice() {
   }
 }
 
-// TODO: build object highScores? with name and score keys --> local.storage.setItem (str:JSON.stringify highscores)
-function displayScore() {
-  clearInterval(timerInterval);
-  h2El.textContent = "High Scores";
-  h3El.textContent = "Your score: " + score;
-  scoreEl.textContent = " ";
-  olEl.textContent = " ";
-  submissionForm.setAttribute("style", "display:inline");
-  playAgain.setAttribute("style", "display:inline");
-  console.log(submissionForm.dataset.state);
-}
-
-// TODO: function winnersAndLosers --> if userScore > pastUserScore[0] then prepend() --> else for loop until find pastUserScore that is lower and prepend()
-
 // calls quiz questions from array and displays them to page along with appended corresponding multiple choice answers
 function quizQuestions() {
-  startBtn.setAttribute("style", "display:none");
-  h2El.textContent = questionsArray[x].question;
-  olEl.innerHTML = " ";
-  for (let i = 0; i < questionsArray[x].choices.length; i++) {
-    var quizChoice = questionsArray[x].choices[i];
-    var liEl = document.createElement("li");
-    liEl.classList.add("interactive");
-    liEl.textContent = quizChoice;
-    liEl.addEventListener("click", userChoice);
-    olEl.append(liEl);
-  }
-}
-
-submissionForm.addEventListener("submit", function(event){
-    event.preventDefault();
-    var nameText = nameInput.value.trim();
-    if (nameText === ""){
-        return;
+    startBtn.setAttribute("style", "display:none");
+    h2El.textContent = questionsArray[x].question;
+    olEl.innerHTML = " ";
+    for (let i = 0; i < questionsArray[x].choices.length; i++) {
+        var quizChoice = questionsArray[x].choices[i];
+        var liEl = document.createElement("li");
+        liEl.classList.add("interactive");
+        liEl.textContent = quizChoice;
+        liEl.addEventListener("click", userChoice);
+        olEl.append(liEl);
     }
-    console.log(nameText + " " + score)
-})
+}
 
 // starts quiz with button click
 document.querySelector("#startBtn").addEventListener("click", function () {
@@ -130,7 +138,10 @@ document.querySelector("#startBtn").addEventListener("click", function () {
 });
 
 // button to view highscore standings
-viewHighScores.addEventListener("click", displayScore);
+viewHighScores.addEventListener("click", function(){
+    clearInterval(timerInterval);
+    finalHighScores();
+});
 
 // button that will refresh the page so user can play again
 playAgain.addEventListener("click", function () {
